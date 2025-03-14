@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Api", "ElDorado.Api\ElDorado.Api.csproj", "{1C609155-315B-4885-9368-E7321F4975FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Domain", "ElDorado.Domain\ElDorado.Domain.csproj", "{5410C58E-D429-4BEF-9464-2F9CD5B86404}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Infrastructure", "ElDorado.Infrastructure\ElDorado.Infrastructure.csproj", "{61BFDEE0-B65A-487E-BB2D-D4C02CB6E691}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{1C609155-315B-4885-9368-E7321F4975FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C609155-315B-4885-9368-E7321F4975FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C609155-315B-4885-9368-E7321F4975FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5410C58E-D429-4BEF-9464-2F9CD5B86404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5410C58E-D429-4BEF-9464-2F9CD5B86404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5410C58E-D429-4BEF-9464-2F9CD5B86404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5410C58E-D429-4BEF-9464-2F9CD5B86404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61BFDEE0-B65A-487E-BB2D-D4C02CB6E691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61BFDEE0-B65A-487E-BB2D-D4C02CB6E691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61BFDEE0-B65A-487E-BB2D-D4C02CB6E691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61BFDEE0-B65A-487E-BB2D-D4C02CB6E691}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
