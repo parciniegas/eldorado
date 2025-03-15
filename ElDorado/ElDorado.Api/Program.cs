@@ -1,27 +1,25 @@
-using FastEndpoints;
-using FastEndpoints.Swagger;
+using Ilse.MinimalApi.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
-    .AddFastEndpoints()
-    .SwaggerDocument();
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen();
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+// Ilse services.
+builder.Services.AddEndpoints();
 
 var app = builder.Build();
-app.UseFastEndpoints()
-    .UseSwaggerGen();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+
+// Ilse Middlewares
+app.MapEndpoints();
 
 app.Run();

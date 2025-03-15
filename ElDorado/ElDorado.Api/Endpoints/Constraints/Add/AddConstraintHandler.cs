@@ -1,21 +1,23 @@
 using ElDorado.Domain.Constraints;
-using FastEndpoints;
+using Ilse.MinimalApi.EndPoints;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ElDorado.Api.Endpoints.Constraints.Add;
 
-public class AddConstraintHandler: Endpoint<AddConstraintRequest, AddConstraintResponse>
+public class AddConstraintHandler: IEndpoint
 {
-    public override void Configure()
+    public RouteHandlerBuilder Configure(IEndpointRouteBuilder endpoints)
     {
-        Post("/api/constraints");
-
-        AllowAnonymous();
+        return endpoints.MapPost("/constraints", HandleAsync)
+            .WithTags("Constraints")
+            .WithName("Add Constraint")
+            .WithDescription("Add a new constraint");
     }
 
-    public override async Task HandleAsync(AddConstraintRequest req, CancellationToken ct)
+    private static async Task<string> HandleAsync([FromBody]AddConstraintRequest req, CancellationToken ct)
     {
         var id = ConstraintManager.AddConstraint(req.Conditions);
 
-        await SendAsync(new AddConstraintResponse { Id = id.ToString() }, cancellation: ct);
+        return await Task.FromResult(id.ToString());
     }
 }

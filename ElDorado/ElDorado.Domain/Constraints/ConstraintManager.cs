@@ -24,19 +24,17 @@ public class ConstraintManager
     public static List<Constraint> GetConstraints(ExpandoObject @object)
     {
         var list = new List<Constraint>();
-        foreach (Constraint constraint in Constraints)
+        foreach (var constraint in Constraints)
         {
             var contains = true;
             foreach (var condition in constraint.Conditions)
             {
-
                 if (!HasProperty(@object, condition.Field) ||
                     GetPropertyValue(@object, condition.Field) != condition.Value)
                 {
                     contains = false;
                     continue;
                 }
-
             }
             if (contains)
                 list.Add(constraint);
@@ -55,6 +53,6 @@ public class ConstraintManager
     {
         var expandoDict = (IDictionary<string, object>)obj;
         var result = expandoDict[propertyName].ToString();
-        return result;
+        return result!;
     }
 }

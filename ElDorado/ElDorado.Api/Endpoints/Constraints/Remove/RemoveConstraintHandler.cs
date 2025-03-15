@@ -1,19 +1,22 @@
 using ElDorado.Domain.Constraints;
-using FastEndpoints;
+using Ilse.MinimalApi.EndPoints;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ElDorado.Api.Endpoints.Constraints.Remove;
 
-public class RemoveConstraintHandler: Endpoint<RemoveConstraintRequest, RemoveConstraintResponse>
+public class RemoveConstraintHandler: IEndpoint
 {
-    public override void Configure()
+    public RouteHandlerBuilder Configure(IEndpointRouteBuilder endpoints)
     {
-        Delete("/api/constraints");
-        AllowAnonymous();
+        return endpoints.MapDelete("/constraints/{constraintId}", HandleAsync)
+            .WithTags("Constraints")
+            .WithName("Remove Constraint")
+            .WithDescription("Remove a constraint");
     }
 
-    public override Task HandleAsync(RemoveConstraintRequest req, CancellationToken ct)
+    public static async Task HandleAsync([FromBody]RemoveConstraintRequest req, CancellationToken ct)
     {
         ConstraintManager.RemoveConstraint(Guid.Parse(req.ConstraintId));
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 }
