@@ -6,7 +6,8 @@ public class RemoveConstraintHandler
 {
     public static void Map(WebApplication app)
     {
-        app.MapDelete("/constraints", HandleAsync);
+        app.MapDelete("/constraints", HandleAsync)
+            .WithTags("Constraints");
     }
 
     private static async Task HandleAsync(string constraintId, IConstraintManager constraintManager)

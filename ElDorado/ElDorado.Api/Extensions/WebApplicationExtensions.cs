@@ -12,5 +12,6 @@ public static class WebApplicationExtensions
         AddConstraintsHandler.Map(app);
         EvaluateConstraintsHandler.Map(app);
         RemoveConstraintHandler.Map(app);
+        RemoveConstraintsHandler.Map(app);
     }
 }

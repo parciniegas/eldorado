@@ -7,7 +7,8 @@ public static class AddConstraintHandler
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/constraints", HandleAsync);
+        app.MapPost("/constraints", HandleAsync)
+            .WithTags("Constraints");
     }
 
     private static async Task HandleAsync(AddConstraintRequest request, IConstraintManager constraintManager)
