@@ -1,58 +1,89 @@
-using System.Dynamic;
-using System.Reflection;
+using System.Text.Json.Nodes;
+using ElDorado.Domain.Constraints.Contracts;
+using ElDorado.Domain.Constraints.Model;
 
 namespace ElDorado.Domain.Constraints;
 
-public class ConstraintManager
+public class ConstraintManager(IConstraintRepository constraintRepository,
+    IConstraintRemovedPublisher constraintRemovedPublisher) : IConstraintManager
 {
-    private static readonly List<Constraint> Constraints = [];
+    readonly IConstraintRepository _constraintRepository = constraintRepository;
 
-    public static Guid AddConstraint(Condition[] conditions, int value = 0)
+    public async Task AddConstraintAsync(Constraint constraint)
     {
-        var constraint = new Constraint(conditions, value);
-        Constraints.Add(constraint);
-
-        return constraint.Id;
+        await _constraintRepository.AddConstraintAsync(constraint);
     }
 
-    public static Guid RemoveConstraint(Guid id)
+    public async Task<List<ConstraintResult>> EvaluateConstraintsAsync(JsonObject entity)
     {
-        Constraints.RemoveAll(c => c.Id == id);
-        return id;
-    }
-
-    public static List<Constraint> GetConstraints(ExpandoObject @object)
-    {
-        var list = new List<Constraint>();
-        foreach (var constraint in Constraints)
+        var results = new List<ConstraintResult>();
+        var constraints = await _constraintRepository.GetAllConstraintsAsync();
+        foreach (var constraint in constraints)
         {
-            var contains = true;
+            var constraintResult = new ConstraintResult
+            {
+                ConstraintId = constraint.Id,
+                IsApplicable = true,
+                EvaluatedConditions = new List<ConditionResult>()
+            };
+
             foreach (var condition in constraint.Conditions)
             {
-                if (!HasProperty(@object, condition.Field) ||
-                    GetPropertyValue(@object, condition.Field) != condition.Value)
-                {
-                    contains = false;
+                var conditionResult = EvaluateCondition(entity, condition);
+                constraintResult.EvaluatedConditions.Add(conditionResult);
+
+                if (conditionResult is { WasEvaluated: true, IsMet: true })
                     continue;
-                }
+
+                constraintResult.IsApplicable = false;
+                break;
             }
-            if (contains)
-                list.Add(constraint);
+
+            results.Add(constraintResult);
         }
 
-        return list;
+        return results;
     }
 
-    private static bool HasProperty(dynamic obj, string propertyName)
+    private ConditionResult EvaluateCondition(JsonObject entity, Condition condition)
     {
-        var expandoDict = (IDictionary<string, object>)obj;
-        return expandoDict.ContainsKey(propertyName);
+        var conditionResult = new ConditionResult
+        {
+            PropertyPath = condition.PropertyPath,
+            WasEvaluated = true,
+            IsMet = true
+        };
+
+        if (!entity.TryGetPropertyValue(condition.PropertyPath, out JsonNode? node))
+        {
+            conditionResult.WasEvaluated = false;
+            conditionResult.IsMet = false;
+            return conditionResult;
+        }
+
+        if (node is not JsonValue value)
+        {
+            conditionResult.WasEvaluated = false;
+            conditionResult.IsMet = false;
+            return conditionResult;
+        }
+
+        conditionResult.IsMet = condition.Operator switch
+        {
+            ConditionOperator.Equals => value.GetValue<string>()
+                .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
+            ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
+            ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
+            _ => false
+        };
+
+        return conditionResult;
     }
 
-    static string GetPropertyValue(dynamic obj, string propertyName)
+    public async Task RemoveConstraintAsync(string id)
     {
-        var expandoDict = (IDictionary<string, object>)obj;
-        var result = expandoDict[propertyName].ToString();
-        return result!;
+        var removed = await _constraintRepository.RemoveConstraintAsync(id);
+        if (removed)
+            await constraintRemovedPublisher.PublishAsync(id);
     }
 }
