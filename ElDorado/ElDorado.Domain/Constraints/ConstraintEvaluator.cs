@@ -3,7 +3,7 @@ using ElDorado.Domain.Constraints.Model;
 
 namespace ElDorado.Domain.Constraints;
 
-public class ConstraintEvaluator : IRestrictionEvaluator
+public class ConstraintEvaluator : IConstraintEvaluator
 {
     public List<ConstraintResult> EvaluateRestrictions(JsonObject targetObject, List<Constraint> constraints)
     {
@@ -78,5 +78,4 @@ public class ConstraintEvaluator : IRestrictionEvaluator
             IsMet = true
         };
     }
-
 }
