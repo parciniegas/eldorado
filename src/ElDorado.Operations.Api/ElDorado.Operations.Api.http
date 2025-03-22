@@ -1,0 +1,6 @@
+@ElDorado.Operations.Api_HostAddress = http://localhost:5224
+
+GET {{ElDorado.Operations.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
