@@ -11,14 +11,17 @@
       "extensions": [
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
+        "ms-dotnettools.vscodeinllicode-csharp",
+        "kreativ-software.csharpextensions",
+        "humao.rest-client",
         "ms-mssql.mssql"
       ],
       "settings": {
         "workbench.colorTheme": "Dracula Theme",
         "mssql.connections": [
           {
-            "server": "localhost,1433",
-            "database": "",
+            "server": "sql_server,1433",
+            "database": "ElDorado",
             "authenticationType": "SqlLogin",
             "user": "sa",
             "password": "SqlServer2022!",

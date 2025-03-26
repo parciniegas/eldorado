@@ -1,6 +1,98 @@
-@ElDorado.Api_HostAddress = http://localhost:5099
+@Constraints_Api_HostAddress = http://localhost:5099
 
-GET {{ElDorado.Api_HostAddress}}/weatherforecast/
+POST {{Constraints_Api_HostAddress}}/constraints HTTP/1.1
+Content-Type: application/json
 Accept: application/json
 
+{
+  "id": "NameAndAgeConstraint",
+  "conditions": [
+    {
+      "propertyPath": "Name",
+      "operator": "=",
+      "value": "Peter"
+    },
+    {
+        "propertyPath": "Age",
+        "operator": ">",
+        "value": 30
+    }
+  ]
+}
+
 ###
+POST {{Constraints_Api_HostAddress}}/constraints/add-list HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "constraintsRequests": [
+    {
+        "id": "FirstName",
+        "conditions": [
+            {
+                "propertyPath": "FirstName",
+                "operator": "=",
+                "value": "John"
+            }
+        ]
+    },
+    {
+        "id": "LastName",
+        "conditions": [
+            {
+                "propertyPath": "LastName",
+                "operator": "=",
+                "value": "Doe"
+            }
+        ]
+    },
+    {
+        "id": "FullName",
+        "conditions": [
+            {
+                "propertyPath": "FirstName",
+                "operator": "=",
+                "value": "John"
+            },
+            {
+                "propertyPath": "LastName",
+                "operator": "=",
+                "value": "Doe"
+            }
+        ]
+    },
+    {
+        "id": "FirstNameAndAge",
+        "conditions": [
+            {
+                "propertyPath": "FirstName",
+                "operator": "=",
+                "value": "John"
+            },
+            {
+                "propertyPath": "Age",
+                "operator": ">",
+                "value": 30
+            }
+        ]
+    }
+  ]
+}
+
+###
+DELETE {{Constraints_Api_HostAddress}}/constraints?constraintId=NameAndAgeConstraint HTTP/1.1
+
+###
+DELETE {{Constraints_Api_HostAddress}}/constraints/remove-list HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "constraintIds": [
+    "FirstName",
+    "LastName",
+    "FullName",
+    "FirstNameAndAge"
+  ]
+}

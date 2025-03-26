@@ -11,8 +11,8 @@ public class RemoveConstraintsHandler
             .WithTags("Constraints");
     }
 
-    private static async Task HandleAsync([FromBody] List<string> constraints, IConstraintManager constraintManager)
+    private static async Task HandleAsync([FromBody] RemoveConstraintsRequest request, IConstraintManager constraintManager)
     {
-        foreach (var constraintId in constraints) await constraintManager.RemoveConstraintAsync(constraintId);
+        foreach (var constraintId in request.ConstraintIds) await constraintManager.RemoveConstraintAsync(constraintId);
     }
 }

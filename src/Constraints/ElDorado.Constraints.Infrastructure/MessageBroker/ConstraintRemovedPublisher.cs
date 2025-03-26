@@ -13,7 +13,7 @@ public class ConstraintRemovedPublisher : IConstraintRemovedPublisher
     public ConstraintRemovedPublisher()
     {
         var factory = new ConnectionFactory();
-        factory.Uri = new Uri("amqp://admin:P2ssw0rd@localhost:5672");
+        factory.Uri = new Uri("amqp://admin:RabbitMQ2023!@rabbitmq:5672");
 
         _connection = factory.CreateConnectionAsync().Result;
         _channel = _connection.CreateChannelAsync().Result;
