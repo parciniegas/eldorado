@@ -1,0 +1,33 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+  "name": "ElDorado - .NET 8.0 (Bookworm)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "eldorado",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/src",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-mssql.mssql"
+      ],
+      "settings": {
+        "workbench.colorTheme": "Dracula Theme",
+        "mssql.connections": [
+          {
+            "server": "localhost,1433",
+            "database": "",
+            "authenticationType": "SqlLogin",
+            "user": "sa",
+            "password": "SqlServer2022!",
+            "emptyPasswordInput": false,
+            "savePassword": false,
+            "profileName": "mssql-container"
+          }
+        ]
+      }
+    }
+  }
+}

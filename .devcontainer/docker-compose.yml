@@ -1,0 +1,38 @@
+services:
+  eldorado:
+    image: mcr.microsoft.com/devcontainers/dotnet:1-8.0-bookworm
+    container_name: ElDorado
+    volumes:
+      - ../..:/workspaces:cached
+    networks:
+      - eldorado
+    ##network_mode: service:sql_server
+    command: sleep infinity
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=RabbitMQ2023!
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - eldorado
+    ##network_mode: service:sql_server
+
+  sql_server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=SqlServer2022!
+    ports:
+      - "1433:1433"
+    networks:
+      - eldorado
+
+networks:
+  eldorado:
+    driver: bridge
