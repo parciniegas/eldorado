@@ -18,6 +18,7 @@ public class ConstraintManager(
 
     public async Task<Result<List<ConstraintResult>>> EvaluateConstraintsAsync(JsonObject entity)
     {
+        // TODO: Move evaluation logic to a separate class
         var results = new List<ConstraintResult>();
         var result = await _constraintRepository.GetAllConstraintsAsync();
         if (result.IsFailed)
@@ -91,46 +92,19 @@ public class ConstraintManager(
                 return conditionResult;
             }
 
+            // TODO: Add support for other datatypes and operators
+            // TODO: Add exception handling for parsing
             conditionResult.IsMet = condition.Operator switch
             {
                 ConditionOperator.Equals => value.GetValue<string>()
                     .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
-                ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
+                ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()!),
                 ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
+                ConditionOperator.GreaterThanOrEqual => value.GetValue<double>() >= double.Parse(condition.Value.ToString()!),
+                ConditionOperator.LessThanOrEqual => value.GetValue<double>() <= double.Parse(condition.Value.ToString()!),
                 _ => false
             };
-
-            // if (propertyValue!.ToString() != condition.Value.ToString())
-            //     return new ConditionResult
-            //     {
-            //         PropertyPath = condition.PropertyPath,
-            //         WasEvaluated = true,
-            //         IsMet = false
-            //     };
         }
-
-        // if (!entity.TryGetPropertyValue(condition.PropertyPath, out var node))
-        // {
-        //     conditionResult.WasEvaluated = false;
-        //     conditionResult.IsMet = false;
-        //     return conditionResult;
-        // }
-
-        // if (node is not JsonValue value)
-        // {
-        //     conditionResult.WasEvaluated = false;
-        //     conditionResult.IsMet = false;
-        //     return conditionResult;
-        // }
-
-        // conditionResult.IsMet = condition.Operator switch
-        // {
-        //     ConditionOperator.Equals => value.GetValue<string>()
-        //         .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
-        //     ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
-        //     ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
-        //     _ => false
-        // };
 
         return conditionResult;
     }
