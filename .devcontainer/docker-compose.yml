@@ -6,7 +6,6 @@ services:
       - ../..:/workspaces:cached
     networks:
       - eldorado
-    ##network_mode: service:sql_server
     command: sleep infinity
 
   rabbitmq:
@@ -20,7 +19,6 @@ services:
       - "15672:15672"
     networks:
       - eldorado
-    ##network_mode: service:sql_server
 
   sql_server:
     image: mcr.microsoft.com/mssql/server:2022-latest
