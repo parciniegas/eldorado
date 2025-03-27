@@ -8,7 +8,7 @@ Accept: application/json
   "id": "NameAndAgeConstraint",
   "conditions": [
     {
-      "propertyPath": "Name",
+      "propertyPath": "Name.FirstName",
       "operator": "=",
       "value": "Peter"
     },
@@ -31,7 +31,7 @@ Accept: application/json
         "id": "FirstName",
         "conditions": [
             {
-                "propertyPath": "FirstName",
+                "propertyPath": "Name.FirstName",
                 "operator": "=",
                 "value": "John"
             }
@@ -41,7 +41,7 @@ Accept: application/json
         "id": "LastName",
         "conditions": [
             {
-                "propertyPath": "LastName",
+                "propertyPath": "Name.LastName",
                 "operator": "=",
                 "value": "Doe"
             }
@@ -51,12 +51,12 @@ Accept: application/json
         "id": "FullName",
         "conditions": [
             {
-                "propertyPath": "FirstName",
+                "propertyPath": "Name.FirstName",
                 "operator": "=",
                 "value": "John"
             },
             {
-                "propertyPath": "LastName",
+                "propertyPath": "Name.LastName",
                 "operator": "=",
                 "value": "Doe"
             }
@@ -66,7 +66,7 @@ Accept: application/json
         "id": "FirstNameAndAge",
         "conditions": [
             {
-                "propertyPath": "FirstName",
+                "propertyPath": "Name.FirstName",
                 "operator": "=",
                 "value": "John"
             },
@@ -95,4 +95,41 @@ Accept: application/json
     "FullName",
     "FirstNameAndAge"
   ]
+}
+
+###
+POST {{Constraints_Api_HostAddress}}/constraints/evaluate HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": {
+    "FirstName": "John",
+    "LastName": "Doe"
+  },
+  "Age": 35
+}
+
+###
+POST {{Constraints_Api_HostAddress}}/constraints/evaluate HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Name": {
+    "FirstName": "Peter",
+    "LastName": "Doe"
+  },
+  "Age": 35
+}
+
+###
+POST {{Constraints_Api_HostAddress}}/constraints/evaluate HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "FirstName": "Peter",
+  "LastName": "Doe",
+  "Age": 35
 }

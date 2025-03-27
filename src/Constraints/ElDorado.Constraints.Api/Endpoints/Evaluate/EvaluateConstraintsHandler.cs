@@ -4,7 +4,7 @@ using ElDorado.Constraints.Domain.Contracts;
 
 namespace ElDorado.Constraints.Api.Endpoints.Evaluate;
 
-public class EvaluateConstraintsHandler
+public static class EvaluateConstraintsHandler
 {
     public static void Map(WebApplication app)
     {
@@ -15,6 +15,7 @@ public class EvaluateConstraintsHandler
     private static async Task<List<ConstraintResult>> HandleAsync(JsonObject entity,
         IConstraintManager constraintManager)
     {
-        return await constraintManager.EvaluateConstraintsAsync(entity);
+        var result = await constraintManager.EvaluateConstraintsAsync(entity);
+        return result.Value;
     }
 }

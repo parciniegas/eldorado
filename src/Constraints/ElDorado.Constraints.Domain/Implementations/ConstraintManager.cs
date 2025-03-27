@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using ElDorado.Constraints.Domain.Constraints.Model;
 using ElDorado.Constraints.Domain.Contracts;
+using FluentResults;
 
 namespace ElDorado.Constraints.Domain.Implementations;
 
@@ -10,16 +11,18 @@ public class ConstraintManager(
 {
     private readonly IConstraintRepository _constraintRepository = constraintRepository;
 
-    public async Task AddConstraintAsync(Constraint constraint)
+    public async Task<Result> AddConstraintAsync(Constraint constraint)
     {
-        await _constraintRepository.AddConstraintAsync(constraint);
+        return await _constraintRepository.AddConstraintAsync(constraint);
     }
 
-    public async Task<List<ConstraintResult>> EvaluateConstraintsAsync(JsonObject entity)
+    public async Task<Result<List<ConstraintResult>>> EvaluateConstraintsAsync(JsonObject entity)
     {
         var results = new List<ConstraintResult>();
-        var constraints = await _constraintRepository.GetAllConstraintsAsync();
-        foreach (var constraint in constraints)
+        var result = await _constraintRepository.GetAllConstraintsAsync();
+        if (result.IsFailed)
+            return Result.Fail<List<ConstraintResult>>(result.Errors);
+        foreach (var constraint in result.Value)
         {
             var constraintResult = new ConstraintResult
             {
@@ -46,11 +49,12 @@ public class ConstraintManager(
         return results;
     }
 
-    public async Task RemoveConstraintAsync(string id)
+    public async Task<Result> RemoveConstraintAsync(string id)
     {
-        var removed = await _constraintRepository.RemoveConstraintAsync(id);
-        if (removed)
+        var result = await _constraintRepository.RemoveConstraintAsync(id);
+        if (result.IsSuccess)
             await constraintRemovedPublisher.PublishAsync(id);
+        return result;
     }
 
     private ConditionResult EvaluateCondition(JsonObject entity, Condition condition)
@@ -62,28 +66,71 @@ public class ConstraintManager(
             IsMet = true
         };
 
-        if (!entity.TryGetPropertyValue(condition.PropertyPath, out var node))
+        var properties = condition.PropertyPath.Split('.');
+        var currentEntity = entity;
+
+        foreach (var property in properties)
         {
-            conditionResult.WasEvaluated = false;
-            conditionResult.IsMet = false;
-            return conditionResult;
+            if (!currentEntity.TryGetPropertyValue(property, out var propertyValue))
+            {
+                conditionResult.WasEvaluated = false;
+                conditionResult.IsMet = false;
+                return conditionResult;
+            }
+
+            if (propertyValue is JsonObject propertyObject)
+            {
+                currentEntity = propertyObject;
+                continue;
+            }
+
+            if (propertyValue is not JsonValue value)
+            {
+                conditionResult.WasEvaluated = false;
+                conditionResult.IsMet = false;
+                return conditionResult;
+            }
+
+            conditionResult.IsMet = condition.Operator switch
+            {
+                ConditionOperator.Equals => value.GetValue<string>()
+                    .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
+                ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
+                ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
+                _ => false
+            };
+
+            // if (propertyValue!.ToString() != condition.Value.ToString())
+            //     return new ConditionResult
+            //     {
+            //         PropertyPath = condition.PropertyPath,
+            //         WasEvaluated = true,
+            //         IsMet = false
+            //     };
         }
 
-        if (node is not JsonValue value)
-        {
-            conditionResult.WasEvaluated = false;
-            conditionResult.IsMet = false;
-            return conditionResult;
-        }
+        // if (!entity.TryGetPropertyValue(condition.PropertyPath, out var node))
+        // {
+        //     conditionResult.WasEvaluated = false;
+        //     conditionResult.IsMet = false;
+        //     return conditionResult;
+        // }
 
-        conditionResult.IsMet = condition.Operator switch
-        {
-            ConditionOperator.Equals => value.GetValue<string>()
-                .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
-            ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
-            ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
-            _ => false
-        };
+        // if (node is not JsonValue value)
+        // {
+        //     conditionResult.WasEvaluated = false;
+        //     conditionResult.IsMet = false;
+        //     return conditionResult;
+        // }
+
+        // conditionResult.IsMet = condition.Operator switch
+        // {
+        //     ConditionOperator.Equals => value.GetValue<string>()
+        //         .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
+        //     ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()),
+        //     ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
+        //     _ => false
+        // };
 
         return conditionResult;
     }

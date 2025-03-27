@@ -2,7 +2,7 @@ using ElDorado.Constraints.Domain.Contracts;
 
 namespace ElDorado.Constraints.Api.Endpoints.Add;
 
-public class AddConstraintsHandler
+public static class AddConstraintsHandler
 {
     public static void Map(WebApplication app)
     {

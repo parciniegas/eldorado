@@ -1,11 +1,12 @@
 using ElDorado.Constraints.Domain.Constraints.Model;
+using FluentResults;
 
 namespace ElDorado.Constraints.Domain.Contracts;
 
 public interface IConstraintRepository
 {
-    Task AddConstraintAsync(Constraint? constraint);
-    Task<Constraint?> GetConstraintAsync(string id);
-    Task<List<Constraint>> GetAllConstraintsAsync();
-    Task<bool> RemoveConstraintAsync(string id);
+    Task<Result> AddConstraintAsync(Constraint constraint);
+    Task<Result<Constraint>> GetConstraintAsync(string id);
+    Task<Result<List<Constraint>>> GetAllConstraintsAsync();
+    Task<Result> RemoveConstraintAsync(string id);
 }
