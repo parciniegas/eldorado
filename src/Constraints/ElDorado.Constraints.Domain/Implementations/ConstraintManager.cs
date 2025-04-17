@@ -58,7 +58,7 @@ public class ConstraintManager(
         return result;
     }
 
-    private ConditionResult EvaluateCondition(JsonObject entity, Condition condition)
+    private static ConditionResult EvaluateCondition(JsonObject entity, Condition condition)
     {
         var conditionResult = new ConditionResult
         {

@@ -2,22 +2,19 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
   "name": "ElDorado - .NET 8.0 (Bookworm)",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "eldorado",
+  "dockerComposeFile": "compose.yml",
+  "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/src",
 
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
-        "ms-dotnettools.vscodeinllicode-csharp",
-        "kreativ-software.csharpextensions",
         "humao.rest-client",
         "ms-mssql.mssql"
       ],
       "settings": {
-        "workbench.colorTheme": "Dracula Theme",
+        "workbench.colorTheme": "Abyss",
         "mssql.connections": [
           {
             "server": "sql_server,1433",
@@ -32,5 +29,6 @@
         ]
       }
     }
-  }
+  },
+  "postCreateCommand": "dotnet restore",
 }
