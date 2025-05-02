@@ -1,0 +1,74 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Operations.Shared;
+
+namespace Operations.Infrastructure.Repositories;
+
+public class SqlServerRepository(ILogger<SqlServerRepository> logger, OperationsContext context) : IRepository
+{
+    private readonly OperationsContext _context = context;
+    private readonly ILogger<SqlServerRepository> _logger = logger;
+
+    public void Add(Operation operation)
+    {
+        try
+        {
+            operation.Id = $"{operation.Id}:{operation.Status}";
+            _context.Operations.Add(operation);
+            _context.SaveChanges();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // Handle the concurrency exception as needed
+            _logger.LogError("Concurrency error: {ex}", ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            // Handle the exception as needed
+            _logger.LogError("Error adding operation: {ex}", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions as needed
+            _logger.LogError("Unexpected error: {ex}", ex.Message);
+        }
+    }
+
+    public List<Operation> GetAll(string? key = null)
+    {
+        if (!string.IsNullOrEmpty(key))
+        {
+            var filteredOperations = _context.Operations
+                .AsNoTracking()
+                .Where(o => o.Status.ToString() == key)
+                .ToList();
+            return filteredOperations;
+        }
+
+        var operations = _context.Operations.ToList();
+        return operations;
+    }
+
+    public Operation GetById(string id)
+    {
+        var operation = _context.Operations
+            .AsNoTracking()
+            .FirstOrDefault(o => o.Id == id);
+        if (operation == null) 
+        {
+            _logger.LogWarning("Operation with ID {id} not found", id);
+            throw new InvalidOperationException($"Operation with ID {id} not found");
+        }
+        return operation;
+    }
+
+    public void Remove(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveCollection(string key)
+    {
+        throw new NotImplementedException();
+    }
+}

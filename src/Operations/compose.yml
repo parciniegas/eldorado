@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - operations-network
+
+  redisinsight:
+    image: redis/redisinsight
+    depends_on:
+      - redis
+    ports:
+      - "5540:5540"
+    networks:
+      - operations-network
+
+  sql-server:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+    ports:
+      - "1433:1433"
+    networks:
+      - operations-network
+
+networks:
+  operations-network:
