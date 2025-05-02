@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Operations", "Operations", "{A29EC263-1EB7-40F2-AB64-66D204D5C1B7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Operations.Api", "Operations\ElDorado.Operations.Api\ElDorado.Operations.Api.csproj", "{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Operations.Domain", "Operations\ElDorado.Operations.Domain\ElDorado.Operations.Domain.csproj", "{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Constraints", "Constraints", "{FAC9DC56-DCD5-675F-BC5B-124B15F14CCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElDorado.Constraints.Api", "Constraints\ElDorado.Constraints.Api\ElDorado.Constraints.Api.csproj", "{25C28A94-E7B4-4260-A06B-F7E463CEAA1B}"
@@ -34,30 +28,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|x64.Build.0 = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Debug|x86.Build.0 = Debug|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|x64.ActiveCfg = Release|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|x64.Build.0 = Release|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|x86.ActiveCfg = Release|Any CPU
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644}.Release|x86.Build.0 = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|x64.Build.0 = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Debug|x86.Build.0 = Debug|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|x64.ActiveCfg = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|x64.Build.0 = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|x86.ActiveCfg = Release|Any CPU
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD}.Release|x86.Build.0 = Release|Any CPU
 		{25C28A94-E7B4-4260-A06B-F7E463CEAA1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{25C28A94-E7B4-4260-A06B-F7E463CEAA1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25C28A94-E7B4-4260-A06B-F7E463CEAA1B}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -111,8 +81,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{ED3E26EF-0F1C-4606-A7F9-B6611FAEF644} = {A29EC263-1EB7-40F2-AB64-66D204D5C1B7}
-		{56C2E540-E4AA-4C0E-AF31-C9ECEDE86ECD} = {A29EC263-1EB7-40F2-AB64-66D204D5C1B7}
 		{25C28A94-E7B4-4260-A06B-F7E463CEAA1B} = {FAC9DC56-DCD5-675F-BC5B-124B15F14CCA}
 		{07251322-07F3-4A01-9CFA-7166152EA11A} = {FAC9DC56-DCD5-675F-BC5B-124B15F14CCA}
 		{537EE6A6-4AF7-4E0E-B4EE-9D5BFF3324BC} = {FAC9DC56-DCD5-675F-BC5B-124B15F14CCA}
