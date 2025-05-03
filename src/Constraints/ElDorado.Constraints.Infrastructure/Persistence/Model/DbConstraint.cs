@@ -1,4 +1,4 @@
-using ElDorado.Constraints.Domain.Constraints.Model;
+using Common.Constraints;
 
 namespace ElDorado.Infrastructure.Persistence.Model;
 

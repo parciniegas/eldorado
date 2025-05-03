@@ -1,4 +1,4 @@
-﻿using ElDorado.Constraints.Domain.Constraints.Model;
+﻿using Common.Constraints;
 using ElDorado.Constraints.Domain.Contracts;
 using ElDorado.Infrastructure.Persistence.Model;
 using FluentResults;

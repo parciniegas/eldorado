@@ -14,7 +14,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ElDoradoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ElDorado")));
-
 builder.Services.AddScoped<IConstraintRepository, ConstraintRepository>();
 builder.Services.AddScoped<IConstraintManager, ConstraintManager>();
 builder.Services.AddSingleton<IConstraintRemovedPublisher, ConstraintRemovedPublisher>();
