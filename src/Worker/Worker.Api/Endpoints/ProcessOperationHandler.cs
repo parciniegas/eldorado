@@ -23,9 +23,6 @@ public class ProcessOperationHandler
         if (operation.Status == OperationStatus.Closed)
             return TypedResults.BadRequest("Operation is already closed");
 
-        if (operation.Status == OperationStatus.Completed)
-            return TypedResults.BadRequest("Operation is already completed");
-
         Operation result = operation;
         return TypedResults.Ok(operationsService.ChangeStatus(operation));
     }

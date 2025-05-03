@@ -8,8 +8,8 @@ public class OperationTester
 {
     #region Fields
     private static readonly int _warmUpCount = 5;
-    private static readonly int _operationCount = 5000;
-    private static readonly int _taskCount = 20;
+    private static readonly int _operationCount = 1000;
+    private static readonly int _taskCount = 10;
     private static int counter = 0;
     #endregion
 

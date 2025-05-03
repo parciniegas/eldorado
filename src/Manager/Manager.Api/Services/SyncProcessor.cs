@@ -10,13 +10,9 @@ public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient o
 {
     public async Task<Operation> Process(Operation operation)
     {
-
-        if (operation.Status == OperationStatus.Closed)
-            Console.WriteLine($"Operation {operation.Id} was finish with status {operation.Status}");
-
         if (operation.Status == OperationStatus.Failed)
             Console.WriteLine($"Operation {operation.Id} failed with status {operation.Status}");
-        
+
         //var constraint = CreateConstraint(operation);
         while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
         {
@@ -31,8 +27,8 @@ public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient o
 
     public Task<Operation> CloseOperation(Operation operation, CancellationToken cancellationToken)
     {
-        if (operation.Status != OperationStatus.Completed)
-            throw new InvalidOperationException($"Operation {operation.Id} is not completed");
+        if (operation.Status != OperationStatus.Closed)
+            throw new InvalidOperationException($"Operation {operation.Id} is not closed");
 
         var operations = redisRepository.GetAll(operation.Id) 
             ?? throw new InvalidOperationException($"Operation {operation.Id} not found");
