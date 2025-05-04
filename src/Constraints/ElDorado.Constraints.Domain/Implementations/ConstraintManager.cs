@@ -12,7 +12,7 @@ public class ConstraintManager(
 {
     private readonly IConstraintRepository _constraintRepository = constraintRepository;
 
-    public async Task<Result> AddConstraintAsync(Constraint constraint)
+    public async Task<Result<string>> AddConstraintAsync(Constraint constraint)
     {
         return await _constraintRepository.AddConstraintAsync(constraint);
     }

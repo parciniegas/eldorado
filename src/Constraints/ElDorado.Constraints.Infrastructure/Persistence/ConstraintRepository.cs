@@ -11,14 +11,14 @@ public class ConstraintRepository(ElDoradoDbContext context)
 {
     private readonly ElDoradoDbContext _context = context;
 
-    public async Task<Result> AddConstraintAsync(Constraint constraint)
+    public async Task<Result<string>> AddConstraintAsync(Constraint constraint)
     {
         try
         {
             var dbConstraint = DbConstraint.FromDomain(constraint);
             _context.Constraints.Add(dbConstraint);
             await _context.SaveChangesAsync();
-            return Result.Ok();
+            return Result.Ok(dbConstraint.Id);
         }
         catch (Exception e)
         {

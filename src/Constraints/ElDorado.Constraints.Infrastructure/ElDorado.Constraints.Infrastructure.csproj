@@ -6,11 +6,11 @@
     <RootNamespace>ElDorado.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../Common/Common.Constraints/Common.Constraints.csproj" />
     <ProjectReference Include="..\ElDorado.Constraints.Domain\ElDorado.Constraints.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
   </ItemGroup>

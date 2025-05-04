@@ -7,7 +7,7 @@ namespace ElDorado.Constraints.Domain.Contracts;
 
 public interface IConstraintManager
 {
-    Task<Result> AddConstraintAsync(Constraint constraint);
+    Task<Result<string>> AddConstraintAsync(Constraint constraint);
     Task<Result<List<ConstraintResult>>> EvaluateConstraintsAsync(JsonObject entity);
     Task<Result> RemoveConstraintAsync(string id);
 }

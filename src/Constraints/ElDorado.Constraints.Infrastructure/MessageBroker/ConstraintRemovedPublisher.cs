@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ElDorado.Constraints.Domain.Contracts;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 
 namespace ElDorado.Infrastructure.MessageBroker;
@@ -10,10 +11,14 @@ public class ConstraintRemovedPublisher : IConstraintRemovedPublisher
     private readonly IChannel _channel;
     private readonly IConnection _connection;
 
-    public ConstraintRemovedPublisher()
+    public ConstraintRemovedPublisher(IConfiguration configuration)
     {
-        var factory = new ConnectionFactory();
-        factory.Uri = new Uri("amqp://admin:RabbitMQ2023!@rabbitmq:5672");
+        var connectionString = configuration.GetConnectionString("RabbitMQ")
+            ?? throw new InvalidOperationException("RabbitMQ connection string is not configured.");
+        var factory = new ConnectionFactory
+        {
+            Uri = new Uri(connectionString)
+        };
 
         _connection = factory.CreateConnectionAsync().Result;
         _channel = _connection.CreateChannelAsync().Result;

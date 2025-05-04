@@ -4,7 +4,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - operations-network
+      - sistecredito
 
   redisinsight:
     image: redis/redisinsight
@@ -13,7 +13,7 @@ services:
     ports:
       - "5540:5540"
     networks:
-      - operations-network
+      - sistecredito
 
   sql-server:
     image: mcr.microsoft.com/mssql/server
@@ -23,7 +23,19 @@ services:
     ports:
       - "1433:1433"
     networks:
-      - operations-network
+      - sistecredito
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=RabbitMQ2023!
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - sistecredito
 
 networks:
-  operations-network:
+  sistecredito:

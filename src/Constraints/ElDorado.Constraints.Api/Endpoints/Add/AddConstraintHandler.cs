@@ -15,12 +15,12 @@ public static class AddConstraintHandler
             .WithTags("Constraints");
     }
 
-    private static async Task<Results<Ok, BadRequest<string>>> HandleAsync(AddConstraintRequest request, IConstraintManager constraintManager)
+    private static async Task<Results<Ok<string>, BadRequest<string>>> HandleAsync(AddConstraintRequest request, IConstraintManager constraintManager)
     {
         var constraint = request.ToConstraint();
         var result = await constraintManager.AddConstraintAsync(constraint);
         return result.IsSuccess
-            ? TypedResults.Ok()
+            ? TypedResults.Ok(result.Value)
             : TypedResults.BadRequest(result.Errors.ToString());
     }
 }

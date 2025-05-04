@@ -4,7 +4,9 @@ using Manager.Api.Utils;
 
 namespace Manager.Api.Services;
 
-public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient operationsHttpClient, 
+public class SyncProcessor(ILogger<SyncProcessor> logger, 
+    OperationsHttpClient operationsHttpClient, 
+    ConstraintHttpClient constraintHttpClient,
     [FromKeyedServices("RedisKey")]IOperationsRepository redisRepository,
     [FromKeyedServices("SqlKey")]IOperationsRepository sqlRepository) : ISyncProcesor
 {
@@ -13,7 +15,10 @@ public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient o
         if (operation.Status == OperationStatus.Failed)
             Console.WriteLine($"Operation {operation.Id} failed with status {operation.Status}");
 
-        //var constraint = CreateConstraint(operation);
+        var constraint = CreateConstraint(operation);
+        var constraintId = await constraintHttpClient.AddConstraint(constraint);
+        logger.LogInformation("Constraint {id} added", constraintId);
+
         while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
         {
             operation = await operationsHttpClient.SendOperationAsync(operation);
@@ -21,6 +26,8 @@ public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient o
 
         if (operation.Status == OperationStatus.Closed)
             operation = CloseOperation(operation, CancellationToken.None).Result;
+
+        await constraintHttpClient.RemoveConstraint(constraint.Id);
 
         return operation;
     }
@@ -48,7 +55,7 @@ public class SyncProcessor(ILogger<SyncProcessor> logger, OperationsHttpClient o
     {
         var constraint
             = new Constraint(
-                "CheckProductNumber",
+                $"CheckProductNumber:{Guid.NewGuid()}",
                 [
                     new Condition("ProductNumber", "==", operation.ProductNumber),
                 ]
