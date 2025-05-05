@@ -47,7 +47,7 @@ public class ConstraintHttpClient(IConfiguration configuration)
             var response = await _httpClient.PostAsync($"{Url}/get/{id}", content);
             response.EnsureSuccessStatusCode();
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            var result = (JsonSerializer.Deserialize<List<Constraint>>(responseContent) 
+            var result = JsonSerializer.Deserialize<List<Constraint>>(responseContent) 
                 ?? throw new InvalidOperationException("Failed to deserialize the response into a Constraint object.");
 
             stopwatch.Stop();

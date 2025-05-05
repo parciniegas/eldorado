@@ -8,8 +8,8 @@ public class OperationTester
 {
     #region Fields
     private static readonly int _warmUpCount = 5;
-    private static readonly int _operationCount = 1000;
-    private static readonly int _taskCount = 10;
+    private static readonly int _operationCount = 5000;
+    private static readonly int _taskCount = 20;
     private static int counter = 0;
     #endregion
 
@@ -26,12 +26,11 @@ public class OperationTester
     #endregion
 
     #region Private Methods
-    private static Operation GenerateOperation()
+    private static Operation GenerateOperation(int id)
     {
-        var id = Guid.NewGuid().ToString();
         var operation = new Operation
         {
-            Id = id,
+            Id = id.ToString(),
             Name = $"Operation: {id}",
             Status = OperationStatus.Requested,
             ProductNumber = Random.Shared.Next(1, 5),
@@ -44,10 +43,13 @@ public class OperationTester
     {
         Console.WriteLine($"Populating queue with {operationCount} operations...");
         var queue = new ConcurrentQueue<Operation>();
-        Enumerable.Range(0, _operationCount)
-            .ToList()
-            .ForEach(n => queue.Enqueue(GenerateOperation()));
 
+        for (int i = _warmUpCount; i < _operationCount; i++)
+        {
+            queue.Enqueue(GenerateOperation(i));
+        }
+        Console.WriteLine($"Queue populated with {queue.Count} operations.");
+        
         return queue;
     }
 
@@ -91,9 +93,10 @@ public class OperationTester
         Console.WriteLine("Warming up...");
         var operations = new List<Operation>();
 
-        Enumerable.Range(0, _warmUpCount)
-            .ToList()
-            .ForEach(i => operations.Add(GenerateOperation()));
+        for (int i = 0; i < _warmUpCount; i++)
+        {
+            operations.Add(GenerateOperation(i));
+        }
 
         operations.ForEach(op => {
             Console.WriteLine($"Warming up operation {op.Id} with status {op.Status} and details {op.Details}");
