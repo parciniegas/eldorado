@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Common.Constraints;
+using Common.Operations;
 
 namespace Manager.Api.Utils;
 
@@ -36,21 +37,28 @@ public class ConstraintHttpClient(IConfiguration configuration)
         }
     }
 
-    public async Task GetConstraint(string id)
+    public async Task<List<Constraint>> GetConstraints(Operation operation, string id)
     {
         try {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            var response = await _httpClient.GetAsync($"{Url}/{id}");
+            var jsonContent = JsonSerializer.Serialize(operation);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync($"{Url}/get/{id}", content);
             response.EnsureSuccessStatusCode();
-            
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            var result = (JsonSerializer.Deserialize<List<Constraint>>(responseContent) 
+                ?? throw new InvalidOperationException("Failed to deserialize the response into a Constraint object.");
+
             stopwatch.Stop();
-            Console.WriteLine($"Constraint {id} retrieved in {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"Constraint {operation.Id} retrieved in {stopwatch.ElapsedMilliseconds} ms");
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error retrieving constraint {id}: {ex.Message}");
-            throw new InvalidOperationException($"Failed to retrieve constraint {id}", ex);
+            Console.WriteLine($"Error retrieving constraint {operation.Id}: {ex.Message}");
+            throw new InvalidOperationException($"Failed to retrieve constraint {operation.Id}", ex);
         }
     }
 

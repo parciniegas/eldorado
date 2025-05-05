@@ -10,11 +10,12 @@ public class ConstraintRemoveSubscriber : IDisposable, IAsyncDisposable
     private readonly IChannel _channel;
     private const string ExchangeName = "constraints.events";
 
+
     public ConstraintRemoveSubscriber(IEnumerable<string> interestedRestrictionIds)
     {
         var factory = new ConnectionFactory
         {
-            Uri = new Uri("amqp://admin:P2ssw0rd@localhost:5672")
+            Uri = new Uri("amqp://admin:RabbitMQ2023!@localhost:5672")
         };
         _connection = factory.CreateConnectionAsync().Result;
         _channel = _connection.CreateChannelAsync().Result;

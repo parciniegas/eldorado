@@ -16,8 +16,14 @@ public class SyncProcessor(ILogger<SyncProcessor> logger,
             Console.WriteLine($"Operation {operation.Id} failed with status {operation.Status}");
 
         var constraint = CreateConstraint(operation);
-        var constraintId = await constraintHttpClient.AddConstraint(constraint);
+        var constraintId = await constraintHttpClient.AddConstraint(constraint) 
+        ?? throw new InvalidOperationException($"Failed to add constraint {constraint.Id}");
         logger.LogInformation("Constraint {id} added", constraintId);
+
+        var constraints = await constraintHttpClient.GetConstraints(operation, constraintId);
+        while (constraints.Count != 0) {
+            Task.Delay(50).Wait();
+        };
 
         while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
         {
