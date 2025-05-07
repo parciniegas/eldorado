@@ -16,6 +16,7 @@ public class ConstraintRepository(ElDoradoDbContext context)
         try
         {
             var dbConstraint = DbConstraint.FromDomain(constraint);
+            dbConstraint.CreateAt = DateTime.UtcNow;
             _context.Constraints.Add(dbConstraint);
             await _context.SaveChangesAsync();
             return Result.Ok(dbConstraint.Id);
@@ -66,5 +67,14 @@ public class ConstraintRepository(ElDoradoDbContext context)
         {
             return Result.Fail(e.Message);
         }
+    }
+
+    public async Task<int> GetPendingConstraintsAsync(List<string> ids)
+    {
+        var count = _context.Constraints
+            .AsNoTracking()
+            .Count(c => ids.Contains(c.Id));
+
+        return await Task.FromResult(count);
     }
 }

@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
-using ElDorado.Constraints.Domain.Constraints.Model;
 using ElDorado.Constraints.Domain.Contracts;
+using ElDorado.Constraints.Domain.Model;
 
 namespace ElDorado.Constraints.Api.Endpoints.Evaluate;
 

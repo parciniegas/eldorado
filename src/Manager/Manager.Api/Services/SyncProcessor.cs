@@ -17,23 +17,35 @@ public class SyncProcessor(ILogger<SyncProcessor> logger,
 
         var constraint = CreateConstraint(operation);
         var constraintId = await constraintHttpClient.AddConstraint(constraint) 
-        ?? throw new InvalidOperationException($"Failed to add constraint {constraint.Id}");
+            ?? throw new InvalidOperationException($"Failed to add constraint {constraint.Id}");
         logger.LogInformation("Constraint {id} added", constraintId);
-
-        var constraints = await constraintHttpClient.GetConstraints(operation, constraintId);
-        while (constraints.Count != 0) {
-            Task.Delay(50).Wait();
-        };
-
-        while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
+    
+        try
         {
-            operation = await operationsHttpClient.SendOperationAsync(operation);
+            var appliedConstrains = await constraintHttpClient.GetConstraints(operation, constraintId);
+            var count = appliedConstrains.Count;
+            while (count > 0) {
+                Task.Delay(250).Wait();
+                var lastCount = count;
+                count = await constraintHttpClient.GetPendingConstraints(appliedConstrains);
+                Console.WriteLine($"Pending constraints: last count {lastCount}, current count {count}");
+            };
+    
+            while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
+            {
+                operation = await operationsHttpClient.SendOperationAsync(operation);
+            }
+    
+            if (operation.Status == OperationStatus.Closed)
+                operation = CloseOperation(operation, CancellationToken.None).Result;
+        }
+        catch {
+            throw;
+        }
+        finally {
+            await constraintHttpClient.RemoveConstraint(constraint.Id);
         }
 
-        if (operation.Status == OperationStatus.Closed)
-            operation = CloseOperation(operation, CancellationToken.None).Result;
-
-        await constraintHttpClient.RemoveConstraint(constraint.Id);
 
         return operation;
     }
@@ -62,8 +74,9 @@ public class SyncProcessor(ILogger<SyncProcessor> logger,
         var constraint
             = new Constraint(
                 $"CheckProductNumber:{Guid.NewGuid()}",
+                
                 [
-                    new Condition("ProductNumber", "==", operation.ProductNumber),
+                    new Condition("ProductNumber", "=", operation.ProductNumber),
                 ]
             );
         return constraint;

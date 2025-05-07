@@ -16,5 +16,6 @@ public static class WebApplicationExtensions
         RemoveConstraintHandler.Map(app);
         RemoveConstraintsHandler.Map(app);
         GetConstraintsExceptHandler.Map(app);
+        GetPendingConstraintsHandler.Map(app);
     }
 }

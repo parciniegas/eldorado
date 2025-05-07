@@ -1,7 +1,9 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Common.Constraints;
 using ElDorado.Constraints.Domain.Constraints.Model;
 using ElDorado.Constraints.Domain.Contracts;
+using ElDorado.Constraints.Domain.Model;
 using FluentResults;
 
 namespace ElDorado.Constraints.Domain.Implementations;
@@ -58,6 +60,26 @@ public class ConstraintManager(
             await constraintRemovedPublisher.PublishAsync(id);
         return result;
     }
+    
+    public async Task<Result<int>> GetPendingConstraintsAsync(List<string> ids)
+    {
+        try
+        {
+            var count = await _constraintRepository.GetPendingConstraintsAsync(ids);
+            return Result.Ok(count);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult(Result.Fail<int>(ex.Message));
+        }
+    }
+    public async Task<Result<Constraint>> GetConstraintAsync(string id)
+    {
+        var result = await _constraintRepository.GetConstraintAsync(id);
+        if (result.IsFailed)
+            return Result.Fail<Constraint>(result.Errors);
+        return Result.Ok(result.Value);
+    }
 
     private static ConditionResult EvaluateCondition(JsonObject entity, Condition condition)
     {
@@ -95,18 +117,34 @@ public class ConstraintManager(
 
             // TODO: Add support for other datatypes and operators
             // TODO: Add exception handling for parsing
-            conditionResult.IsMet = condition.Operator switch
+            switch (condition.Operator)
             {
-                ConditionOperator.Equals => value.GetValue<string>()
-                    .Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase),
-                ConditionOperator.GreaterThan => value.GetValue<double>() > double.Parse(condition.Value.ToString()!),
-                ConditionOperator.LessThan => value.GetValue<double>() < (condition.Value as double?),
-                ConditionOperator.GreaterThanOrEqual => value.GetValue<double>() >= double.Parse(condition.Value.ToString()!),
-                ConditionOperator.LessThanOrEqual => value.GetValue<double>() <= double.Parse(condition.Value.ToString()!),
-                _ => false
-            };
+                case ConditionOperator.Equals:
+                    if (value.GetValueKind() == JsonValueKind.String)
+                        conditionResult.IsMet = value.GetValue<string>().Equals(condition.Value.ToString(), StringComparison.OrdinalIgnoreCase);
+                    else if (value.GetValueKind() == JsonValueKind.Number)
+                        conditionResult.IsMet = value.GetValue<double>() == double.Parse(condition.Value.ToString()!);
+                    break;
+                case ConditionOperator.GreaterThan:
+                    conditionResult.IsMet = value.GetValue<double>() > double.Parse(condition.Value.ToString()!);
+                    break;
+                case ConditionOperator.LessThan:
+                    conditionResult.IsMet = value.GetValue<double>() < (condition.Value as double?);
+                    break;
+                case ConditionOperator.GreaterThanOrEqual:
+                    conditionResult.IsMet = value.GetValue<double>() >= double.Parse(condition.Value.ToString()!);
+                    break;
+                case ConditionOperator.LessThanOrEqual:
+                    conditionResult.IsMet = value.GetValue<double>() <= double.Parse(condition.Value.ToString()!);
+                    break;
+                default:
+                    conditionResult.IsMet = false;
+                    break;
+            }
+    
         }
 
         return conditionResult;
     }
+
 }

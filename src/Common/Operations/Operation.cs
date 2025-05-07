@@ -8,7 +8,7 @@ public class Operation()
     public required string Id { get; set; }
     [JsonPropertyName("name")]
     public required string Name { get; set; }
-    [JsonPropertyName("product")]
+    [JsonPropertyName("productNumber")]
     public int ProductNumber { get; set; }
     [JsonPropertyName("status")]
     public required OperationStatus Status { get; set; }

@@ -37,17 +37,18 @@ public class ConstraintHttpClient(IConfiguration configuration)
         }
     }
 
-    public async Task<List<Constraint>> GetConstraints(Operation operation, string id)
+    public async Task<List<string>> GetConstraints(Operation operation, string id)
     {
         try {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var jsonContent = JsonSerializer.Serialize(operation);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{Url}/get/{id}", content);
+            var url = $"{Url}/get/{id}";
+            var response = await _httpClient.PostAsync($"{url}", content);
             response.EnsureSuccessStatusCode();
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            var result = JsonSerializer.Deserialize<List<Constraint>>(responseContent) 
+            var result = JsonSerializer.Deserialize<List<string>>(responseContent) 
                 ?? throw new InvalidOperationException("Failed to deserialize the response into a Constraint object.");
 
             stopwatch.Stop();
@@ -59,6 +60,30 @@ public class ConstraintHttpClient(IConfiguration configuration)
         {
             Console.WriteLine($"Error retrieving constraint {operation.Id}: {ex.Message}");
             throw new InvalidOperationException($"Failed to retrieve constraint {operation.Id}", ex);
+        }
+    }
+
+    public async Task<int> GetPendingConstraints(List<string> ids)
+    {
+        try {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            var jsonContent = JsonSerializer.Serialize(ids);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync($"{Url}/pending", content);
+            response.EnsureSuccessStatusCode();
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            var result = JsonSerializer.Deserialize<int>(responseContent);
+
+            stopwatch.Stop();
+            Console.WriteLine($"Pending constraints retrieved in {stopwatch.ElapsedMilliseconds} ms");
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving pending constraints: {ex.Message}");
+            throw new InvalidOperationException("Failed to retrieve pending constraints", ex);
         }
     }
 

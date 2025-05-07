@@ -9,7 +9,7 @@ public class OperationTester
     #region Fields
     private static readonly int _warmUpCount = 5;
     private static readonly int _operationCount = 5000;
-    private static readonly int _taskCount = 20;
+    private static readonly int _taskCount = 30;
     private static int counter = 0;
     #endregion
 
@@ -26,14 +26,15 @@ public class OperationTester
     #endregion
 
     #region Private Methods
-    private static Operation GenerateOperation(int id)
+    private static Operation GenerateOperation()
     {
+        var id = Guid.NewGuid();
         var operation = new Operation
         {
             Id = id.ToString(),
             Name = $"Operation: {id}",
             Status = OperationStatus.Requested,
-            ProductNumber = Random.Shared.Next(1, 5),
+            ProductNumber = Random.Shared.Next(1, 30),
         };
   
         return operation;
@@ -46,7 +47,7 @@ public class OperationTester
 
         for (int i = _warmUpCount; i < _operationCount; i++)
         {
-            queue.Enqueue(GenerateOperation(i));
+            queue.Enqueue(GenerateOperation());
         }
         Console.WriteLine($"Queue populated with {queue.Count} operations.");
         
@@ -95,7 +96,7 @@ public class OperationTester
 
         for (int i = 0; i < _warmUpCount; i++)
         {
-            operations.Add(GenerateOperation(i));
+            operations.Add(GenerateOperation());
         }
 
         operations.ForEach(op => {
