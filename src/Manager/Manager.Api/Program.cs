@@ -14,11 +14,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<OperationsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<OperationsHttpClient>();    
+builder.Services.AddScoped<OperationsHttpClient>();
 builder.Services.AddScoped<ConstraintHttpClient>();
 builder.Services.AddKeyedScoped<IOperationsRepository, RedisRepository>("RedisKey");
 builder.Services.AddKeyedScoped<IOperationsRepository, SqlServerRepository>("SqlKey");
-builder.Services.AddScoped<ISyncProcesor, SyncProcessor>();  
+builder.Services.AddKeyedScoped<ISyncProcesor, SyncProcessorWithEvents>("SyncProcessorWithEvents");
+builder.Services.AddKeyedScoped<ISyncProcesor, SyncProcessorWithRequest>("SyncProcessorWithRequest");
 
 var connectionString = builder.Configuration.GetConnectionString("RedisConnection");
 

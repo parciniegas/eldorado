@@ -2,9 +2,9 @@ using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace ElDorado.Client;
+namespace Manager.Api.Events;
 
-public class ConstraintRemoveSubscriber : IDisposable, IAsyncDisposable
+public class RabbitMqCollector
 {
     private readonly IConnection _connection;
     private readonly IChannel _channel;
@@ -14,7 +14,7 @@ public class ConstraintRemoveSubscriber : IDisposable, IAsyncDisposable
     private int _expectedEventCount = 0;
     private readonly object _lock = new();
 
-    public ConstraintRemoveSubscriber(IEnumerable<string> interestedRestrictionIds)
+    public RabbitMqCollector(IEnumerable<string> interestedRestrictionIds)
     {
         var factory = new ConnectionFactory
         {
@@ -51,7 +51,7 @@ public class ConstraintRemoveSubscriber : IDisposable, IAsyncDisposable
         }
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
-        consumer.ReceivedAsync += (OnMessageReceived);
+        consumer.ReceivedAsync += OnMessageReceived;
 
         _channel.BasicConsumeAsync(
             queue: queueName,
