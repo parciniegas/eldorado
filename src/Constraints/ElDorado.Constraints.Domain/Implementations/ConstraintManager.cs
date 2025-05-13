@@ -24,6 +24,7 @@ public class ConstraintManager(
         // TODO: Move evaluation logic to a separate class
         var results = new List<ConstraintResult>();
         var result = await _constraintRepository.GetAllConstraintsAsync();
+        result = result.Value.Where(c => c.Conditions.Count > 0).ToList();
         if (result.IsFailed)
             return Result.Fail<List<ConstraintResult>>(result.Errors);
         foreach (var constraint in result.Value)
@@ -32,6 +33,7 @@ public class ConstraintManager(
             {
                 ConstraintId = constraint.Id,
                 IsApplicable = true,
+                CreateAt = constraint.CreateAt,
                 EvaluatedConditions = new List<ConditionResult>()
             };
 
@@ -60,7 +62,7 @@ public class ConstraintManager(
             await constraintRemovedPublisher.PublishAsync(id);
         return result;
     }
-    
+
     public async Task<Result<int>> GetPendingConstraintsAsync(List<string> ids)
     {
         try
@@ -141,7 +143,7 @@ public class ConstraintManager(
                     conditionResult.IsMet = false;
                     break;
             }
-    
+
         }
 
         return conditionResult;

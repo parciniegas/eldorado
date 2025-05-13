@@ -24,12 +24,13 @@ public class SyncProcessorWithRequest(ILogger<SyncProcessorWithRequest> logger,
         {
             var appliedConstrains = await constraintHttpClient.GetConstraints(operation, constraintId);
             var count = appliedConstrains.Count;
+            Console.WriteLine($"==============>Operation {operation.Id} has {count} constraints<===============");
             while (count > 0)
             {
-                Task.Delay(250).Wait();
+                Task.Delay(100).Wait();
                 var lastCount = count;
                 count = await constraintHttpClient.GetPendingConstraints(appliedConstrains);
-                Console.WriteLine($"Pending constraints: last count {lastCount}, current count {count}");
+                Console.WriteLine($"Pending constraints for {operation.Id}: last count {lastCount}, current count {count}");
             }
 
             while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)

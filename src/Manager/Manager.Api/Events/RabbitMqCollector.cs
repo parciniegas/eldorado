@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -10,8 +11,10 @@ public class RabbitMqCollector
     private readonly IChannel _channel;
     private const string ExchangeName = "constraints.events";
     private readonly TaskCompletionSource<bool> _taskCompletionSource = new();
+    private readonly ConcurrentBag<string> _receivedMessages = new();
     private int _receivedCount = 0;
     private int _expectedEventCount = 0;
+    // private bool shouldSetResult = false;
     private readonly object _lock = new();
 
     public RabbitMqCollector(IEnumerable<string> interestedRestrictionIds)
@@ -64,17 +67,21 @@ public class RabbitMqCollector
         try
         {
             var message = JsonSerializer.Deserialize<ConstraintRemovedEvent>(args.Body.Span);
-
+            bool shouldSetResult = false;
             lock (_lock)
             {
                 _receivedCount++;
-                if (_receivedCount == _expectedEventCount)
+                ProcessRestrictionDeletion(message);
+                shouldSetResult = _receivedCount >= _expectedEventCount;
+                Console.WriteLine($"Received {_receivedCount} of {_expectedEventCount} events");
+
+                _channel.BasicAckAsync(args.DeliveryTag, false);
+
+                if (shouldSetResult)
                 {
                     _taskCompletionSource.SetResult(true);
                 }
             }
-            ProcessRestrictionDeletion(message);
-            await _channel.BasicAckAsync(args.DeliveryTag, false);
         }
         catch (Exception ex)
         {

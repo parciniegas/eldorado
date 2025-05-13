@@ -5,7 +5,7 @@ using Manager.Api.Utils;
 
 namespace Manager.Api.Services;
 
-public class SyncProcessorWithEvents(ILogger<SyncProcessorWithRequest> logger,
+public class SyncProcessorWithEvents(ILogger<SyncProcessorWithEvents> logger,
     OperationsHttpClient operationsHttpClient,
     ConstraintHttpClient constraintHttpClient,
     [FromKeyedServices("RedisKey")] IOperationsRepository redisRepository,
@@ -24,8 +24,14 @@ public class SyncProcessorWithEvents(ILogger<SyncProcessorWithRequest> logger,
         try
         {
             var appliedConstrains = await constraintHttpClient.GetConstraints(operation, constraintId);
-            var collector = new RabbitMqCollector(appliedConstrains);
-            await collector.WaitForAllEventsAsync();
+            var count = appliedConstrains.Count;
+            Console.WriteLine($"==============>Operation {operation.Id} has {count} constraints<===============");
+            if (count > 0)
+            {
+                using var consumer = new RabbitMqEventConsumer(appliedConstrains);
+                var events = await consumer.ConsumeEventsAsync(TimeSpan.FromSeconds(30));
+            }
+
             while (operation.Status != OperationStatus.Closed && operation.Status != OperationStatus.Failed)
             {
                 operation = await operationsHttpClient.SendOperationAsync(operation);

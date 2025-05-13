@@ -8,8 +8,8 @@ public class OperationTester
 {
     #region Fields
     private static readonly int _warmUpCount = 5;
-    private static readonly int _operationCount = 5000;
-    private static readonly int _taskCount = 30;
+    private static readonly int _operationCount = 500;
+    private static readonly int _taskCount = 10;
     private static int counter = 0;
     #endregion
 
@@ -22,7 +22,7 @@ public class OperationTester
         ProcessQueueOperations(operations, _taskCount);
         stopwatch.Stop();
         Console.WriteLine($"{_operationCount} operations processed in {stopwatch.ElapsedMilliseconds} ms using {_taskCount} tasks");
-     }
+    }
     #endregion
 
     #region Private Methods
@@ -34,9 +34,9 @@ public class OperationTester
             Id = id.ToString(),
             Name = $"Operation: {id}",
             Status = OperationStatus.Requested,
-            ProductNumber = Random.Shared.Next(1, 30),
+            ProductNumber = Random.Shared.Next(1, 10),
         };
-  
+
         return operation;
     }
 
@@ -50,14 +50,14 @@ public class OperationTester
             queue.Enqueue(GenerateOperation());
         }
         Console.WriteLine($"Queue populated with {queue.Count} operations.");
-        
+
         return queue;
     }
 
     private static Operation ProcessOperation(Operation operation)
     {
         Interlocked.Increment(ref counter);
-        Console.WriteLine($"Processing operation {counter} of {_operationCount+_warmUpCount}");
+        Console.WriteLine($"Processing operation {counter} of {_operationCount + _warmUpCount}");
         var client = new OperationHttpClient(new HttpClient());
         operation = client.SendOperation(operation);
 
@@ -99,7 +99,8 @@ public class OperationTester
             operations.Add(GenerateOperation());
         }
 
-        operations.ForEach(op => {
+        operations.ForEach(op =>
+        {
             Console.WriteLine($"Warming up operation {op.Id} with status {op.Status} and details {op.Details}");
             ProcessOperation(op);
             Thread.Sleep(Random.Shared.Next(10, 50));

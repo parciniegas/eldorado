@@ -20,7 +20,7 @@ public class GetConstraintsExceptHandler
         if (constraint.IsFailed)
             return [];
         result = result.Value
-            .Where(c => c.IsApplicable && c.ConstraintId != id && c.CreateAt > constraint.Value.CreateAt)
+            .Where(c => c.IsApplicable && c.ConstraintId != id && c.CreateAt < constraint.Value.CreateAt)
             .ToList();
         var ids = result.Value.Select(c => c.ConstraintId).ToList();
         if (ids.Count == 0)

@@ -7,22 +7,23 @@ namespace Manager.Api.Utils;
 
 public class ConstraintHttpClient(IConfiguration configuration)
 {
-    private readonly string Url = configuration["ConstraintUrl"] 
+    private readonly string Url = configuration["ConstraintUrl"]
         ?? throw new ArgumentNullException(nameof(configuration), "Configuration key 'ConstraintUrl' cannot be null.");
     private readonly HttpClient _httpClient = new();
 
     public async Task<string?> AddConstraint(Constraint constraint)
     {
-        try {
+        try
+        {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var jsonContent = JsonSerializer.Serialize(constraint);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(Url, content);
             response.EnsureSuccessStatusCode();
-            
+
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            var result = JsonSerializer.Deserialize<string>(responseContent) 
+            var result = JsonSerializer.Deserialize<string>(responseContent)
                 ?? throw new InvalidOperationException("Failed to deserialize the response into a string object.");
 
             stopwatch.Stop();
@@ -39,7 +40,9 @@ public class ConstraintHttpClient(IConfiguration configuration)
 
     public async Task<List<string>> GetConstraints(Operation operation, string id)
     {
-        try {
+        try
+        {
+            Console.WriteLine($"************RETRIEVING CONSTRAINT {id}*************");
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var jsonContent = JsonSerializer.Serialize(operation);
@@ -48,7 +51,7 @@ public class ConstraintHttpClient(IConfiguration configuration)
             var response = await _httpClient.PostAsync($"{url}", content);
             response.EnsureSuccessStatusCode();
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            var result = JsonSerializer.Deserialize<List<string>>(responseContent) 
+            var result = JsonSerializer.Deserialize<List<string>>(responseContent)
                 ?? throw new InvalidOperationException("Failed to deserialize the response into a Constraint object.");
 
             stopwatch.Stop();
@@ -65,7 +68,8 @@ public class ConstraintHttpClient(IConfiguration configuration)
 
     public async Task<int> GetPendingConstraints(List<string> ids)
     {
-        try {
+        try
+        {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             var jsonContent = JsonSerializer.Serialize(ids);
@@ -89,20 +93,15 @@ public class ConstraintHttpClient(IConfiguration configuration)
 
     public async Task<string?> RemoveConstraint(string id)
     {
-        try {
+        try
+        {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
             var response = await _httpClient.DeleteAsync($"{Url}?constraintId={id}");
             response.EnsureSuccessStatusCode();
-            
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-            var result = JsonSerializer.Deserialize<string>(responseContent) 
-                ?? throw new InvalidOperationException("Failed to deserialize the response into a string object.");
-
             stopwatch.Stop();
             Console.WriteLine($"Constraint {id} deleted in {stopwatch.ElapsedMilliseconds} ms");
 
-            return result;
+            return id;
         }
         catch (Exception ex)
         {
