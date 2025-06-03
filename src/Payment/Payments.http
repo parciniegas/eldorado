@@ -1,0 +1,29 @@
+# Requests for Payment Service Endpoints
+
+# Base URL for the Payment service - adjust if your service runs on a different port
+@baseUrl = http://localhost:5000 # Assuming default Kestrel port, update as needed
+
+###
+# PayOrder Endpoint
+# POST {{baseUrl}}/payment/pay
+# Simulates a payment request.
+POST {{baseUrl}}/payment/pay
+Content-Type: application/json
+
+{
+  "id": 12345, # Example Payment/Order ID
+  "amount": 99.99
+}
+
+###
+# RefundOrder Endpoint
+# POST {{baseUrl}}/payment/refund
+# Simulates a refund request.
+POST {{baseUrl}}/payment/refund
+Content-Type: application/json
+
+{
+  "id": 12345, # Example Payment/Order ID that was previously paid
+  "amount": 99.99
+}
+
